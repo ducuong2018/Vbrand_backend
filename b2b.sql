@@ -41,14 +41,3 @@ create table shops.company_info_advan(
   	created_at timestamp without time zone default CURRENT_TIMESTAMP,
   	updated_at timestamp without time zone default CURRENT_TIMESTAMP
 )
-
-create table advancedEnterprise(
-  id integer serial not null primary key,
-  certificate_id integer  foreign key (certificate_id) REFERENCES certificat (id),
-  productionProcess_id integer  foreign key (productionProcess_id) REFERENCES productionProcess (id),
-  devices_id integer  foreign key (devices_id) REFERENCES devices (id),
-  productionLine_id integer  foreign key (productionLine_id) REFERENCES productionLine (id),
-  checkQuality_id integer  foreign key (checkQuality_id) REFERENCES checkQuality (id),
-  
-  
-)
