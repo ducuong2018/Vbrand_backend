@@ -1,7 +1,6 @@
 
 // @ts-ignore
 const jwtHelper = require("../helpers/jwt.helper");
-const debug = console.log.bind(console);
 // @ts-ignore
 const {passwordCheck} = require("./index");
 // @ts-ignore
@@ -16,7 +15,7 @@ const accessTokenLife =  "1h";
 // @ts-ignore
 const accessTokenSecret =  "cuongdc";
 // Thời gian sống của refreshToken
-const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE || "365d";
+const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE || "3650d";
 // Mã secretKey này phải được bảo mật tuyệt đối, các bạn có thể lưu vào biến môi trường hoặc file
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || "refresh-token-cuongdc";
 
@@ -36,12 +35,11 @@ const login = async (req,res) =>{
                 email: result.rows[0].email ,
                 password_crypt: result.rows[0].password_crypt
             };
-            console.log(result.rows[0].password_crypt,req.body.password)
             if(passwordCheck(req.body.password,result.rows[0].password_crypt)){
                 // debug(`Thực hiện tạo mã Token, [thời gian sống 1 giờ.]`);
                 const accessToken = await jwtHelper.generateToken(userData, accessTokenSecret, accessTokenLife);
 
-                // debug(`Thực hiện tạo mã Refresh Token, [thời gian sống 10 năm] =))`);
+                // debug(`Thực hiện tạo mã Refresh Token, [thời gian sống 1 năm] =))`);
                 const refreshToken = await jwtHelper.generateToken(userData, refreshTokenSecret, refreshTokenLife);
 
                 // Lưu lại 2 mã access & Refresh token, với key chính là cái refreshToken để đảm bảo unique và không sợ hacker sửa đổi dữ liệu truyền lên.
@@ -79,21 +77,15 @@ const refreshToken = async (req, res) => {
         try {
             // Verify kiểm tra tính hợp lệ của cái refreshToken và lấy dữ liệu giải mã decoded
             const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
-
+            console.log(decoded)
             // Thông tin user lúc này các bạn có thể lấy thông qua biến decoded.data
-            // có thể mở comment dòng debug bên dưới để xem là rõ nhé.
-            // debug("decoded: ", decoded);
-            const userFakeData = decoded.data;
+            const userData = decoded.data;
 
-            debug(`Thực hiện tạo mã Token trong bước gọi refresh Token, [thời gian sống vẫn là 1 giờ.]`);
-            const accessToken = await jwtHelper.generateToken(userFakeData, accessTokenSecret, accessTokenLife);
+            const accessToken = await jwtHelper.generateToken(userData, accessTokenSecret, accessTokenLife);
 
             // gửi token mới về cho người dùng
             return res.status(200).json({accessToken});
         } catch (error) {
-            // Lưu ý trong dự án thực tế hãy bỏ dòng debug bên dưới, mình để đây để debug lỗi cho các bạn xem thôi
-            debug(error);
-
             res.status(403).json({
                 message: 'Invalid refresh token.',
             });
