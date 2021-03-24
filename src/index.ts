@@ -2,12 +2,22 @@ import express from "express";
 const app = express();
 const port = 4001;
 const initAPIs = require("./routers/index.router");
-
+import sequelize from "./database"
 
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+const test =  async () =>{
+    try {
+      await  sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+}
 
+
+test();
 // app.post('/verify',function(req,res){
 //
 //     if(req.body.otp==otp){
@@ -35,9 +45,9 @@ app.use(express.urlencoded({extended: false}));
 //     });
 
 //Router
-initAPIs(app)
-
-
+// initAPIs(app)
+//
+//
 
 
 app.listen(port,()=>{

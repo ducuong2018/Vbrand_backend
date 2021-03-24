@@ -25,6 +25,9 @@
     "nodemailer": "^6.5.0",
     "nodemon": "^2.0.7",
     "pg": "^8.5.1",
-    "redis": "^3.0.2"
+    "pg-hstore": "^2.3.3",
+    "redis": "^3.0.2",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0"
   }
 }
